@@ -93,39 +93,21 @@ As we are asked to use both RL and attention.
 
 To use RL, the model must use `utils/rewards.py`, which include `init_scorer,get_self_critical_reward,get_scores,get_self_cider_scores`.
 
-In the `train.py`, the model is build by `LossWrapper`, which is a subclass of `nn.Module`, that is, a newtork.
-```
-lw_model = LossWrapper(model, opt)
-```
-In the `LossWrapper`, `get_self_critical_reward` is only used
-```
-if struc_flag:
-    ...
-elif not sc_flag:
-    ...
-else:
-    ...
-    reward = get_self_critical_reward(greedy_res, gts, gen_result, self.opt)
-    ...
-```
+In the `train.py`, the model is build by `LossWrapper` in `captioning/loss_wrapper.py`, which is a subclass of `nn.Module`.
 
-Thus the key is `struc_flag is False` and `sc_flag is True`. In the `train.py`:
-```
-# If start self critical training
-if opt.self_critical_after != -1 and epoch >= opt.self_critical_after:
-    sc_flag = True
-    init_scorer(opt.cached_tokens)
-else:
-    sc_flag = False
-.....
-.....
-# If start structure loss training
-if opt.structure_after != -1 and epoch >= opt.structure_after:
-    struc_flag = True
-    init_scorer(opt.cached_tokens)
-else:
-    struc_flag = False
-```
-In conclusion, we need
-* `opt.self_critical_after != -1 and epoch >= opt.self_critical_after`
-* `opt.structure_after == -1 or epoch < opt.structure_after:`
+In the `LossWrapper`, `get_self_critical_reward` is only under two situations
+
+* `struc_flag` is `True` and `opt.structure_loss_type = new_self_critical`
+    * This occurs in `train.py` when `opt.structure_after != -1 and epoch >= opt.structure_after`
+    * if `opt.structure_loss_weight > 0`,  `StructureLosses` is used, which is in `modules/losses.py`, if `opt.structure_loss_type = new_self_critical`, then RL is used.
+
+
+* `struc_flag is False` and `sc_flag is True`
+    * This occurs when 
+    ```
+    opt.self_critical_after != -1 and epoch >= opt.self_critical_after
+    opt.structure_after == -1 or epoch < opt.structure_after
+    ```
+    * RL is directly used.
+
+
