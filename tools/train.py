@@ -16,7 +16,7 @@ import traceback
 from collections import defaultdict
 import os
 import sys
-sys.path.append((os.getcwd())
+sys.path.append((os.getcwd()))
 import captioning.utils.opts as opts
 import captioning.models as models
 from captioning.data.dataloader import *
@@ -85,9 +85,9 @@ def train(opt):
     # This allows loss function computed separately on each machine
     lw_model = LossWrapper(model, opt)
     # Wrap with dataparallel
-    dp_model = torch.nn.DataParallel(model)
+    dp_model = model 
     dp_model.vocab = getattr(model, 'vocab', None)  # nasty
-    dp_lw_model = torch.nn.DataParallel(lw_model)
+    dp_lw_model = lw_model
 
     ##########################
     #  Build optimizer

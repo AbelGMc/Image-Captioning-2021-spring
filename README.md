@@ -135,8 +135,34 @@ The `ciderD_scorer.py` in `cider/pyciderevalcap/ciderD/ciderD_scorer.py` is modi
 ```
 As `self.document_frequency` is default to to have no assignment.
 
-### Train
+### Training
+
+In `train.py` we replace:
+```
+#dp_model = torch.nn.DataParallel(model)
+#dp_model.vocab = getattr(model, 'vocab', None)  # nasty
+#dp_lw_model = torch.nn.DataParallel(lw_model)
+
+#To
+dp_model = model 
+dp_model.vocab = getattr(model, 'vocab', None)  # nasty
+dp_lw_model = lw_model
+```
+The orginal code raise error for `DataParallel`, so we only use one CPU.
+
+
+In `ciderD_scorer.py` we replace
+```
+# df = np.log(max(1.0, self.document_frequency(ngram)
+#To
+df = np.log(max(1.0, self.document_frequency.get(ngram,0)))
+```
+The original code is SB.
+
+
+Now we Run: 
 
 ```
-python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc --val_images_use 100 --language_eval 0
+python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc --val_images_use 100 --language_eval 0 --cached_tokens f8k-train-idxs
 ```
+
