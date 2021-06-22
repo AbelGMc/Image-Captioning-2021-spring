@@ -97,12 +97,12 @@ In the `train.py`, the model is build by `LossWrapper` in `captioning/loss_wrapp
 
 In the `LossWrapper`, `get_self_critical_reward` is only under two situations
 
-* `struc_flag` is `True` and `opt.structure_loss_type = new_self_critical` and `opt.max_epochs > opt.structure_after`
+* `struc_flag = True` and `opt.structure_loss_type = new_self_critical`. (need `opt.max_epochs > opt.structure_after`)
     * This occurs in `train.py` when `opt.structure_after != -1 and epoch >= opt.structure_after`
     * if `opt.structure_loss_weight > 0`,  `StructureLosses` is used, which is in `modules/losses.py`, if `opt.structure_loss_type = new_self_critical`, then RL is used.
 
 
-* `struc_flag is False` and `sc_flag is True` and `opt.max_epochs>opt.self_critical_after`(suppose `opt.structure_after == -1(default)`).
+* `struc_flag is False` and `sc_flag is True`. (need `opt.max_epochs>opt.self_critical_after` if `opt.structure_after == -1(default)`).
     * This occurs when 
     ```
     opt.self_critical_after != -1 and epoch >= opt.self_critical_after
