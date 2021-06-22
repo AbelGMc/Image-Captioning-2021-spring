@@ -62,12 +62,13 @@ for i,img in enumerate(imgs):
 
 #### (2) Run `prepro_labels.py`
 
-For example
+Use preprocessed flickr8kcn captions
 ```
-python scripts/prepro_labels.py --input_json data/dataset_coco.json --output_json data/cocotalk.json --output_h5 data/cocotalk
+python scripts/prepro_labels.py --input_json data/flickr8kcn_original.json --output_json data/f8ktalk.json --output_h5 data/f8ktalk
 ```
+The image information and vocabulary are dumped into `data/f8ktalk.json` and discretized caption data are dumped into `data/f8ktalk_label.h5`.
 
-#### (3) Download and process preextracted features
+#### (3a) Download and process preextracted features
 
 (The `scripts/prepro_feats.py` can extract features from resnet101 or etc. But now we just use downloaded features from Flick8kcn github repository.)
 
@@ -75,6 +76,16 @@ python scripts/prepro_labels.py --input_json data/dataset_coco.json --output_jso
 
 The job is done in notebook 2,where features are stored in `./data/feature/[id].npy` using functions from `bigfile.py`.
 
+#### (3b) Train Resnet101 features
+```
+python scripts/prepro_feats.py --input_json data/flickr8kcn_original.json --output_dir data/f8ktalk --images_root $IMAGE_ROOT
+```
+
+If you see error:  **RuntimeError: CUDA error: no kernel image is available for execution on the driver, when use pytorch on linux with RTX 3090**, you can try code:
+
+```
+pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+```
 
 ## Data training
 
