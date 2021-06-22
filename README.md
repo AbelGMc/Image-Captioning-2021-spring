@@ -93,7 +93,7 @@ As we are asked to use both RL and attention.
 
 To use RL, the model must use `utils/rewards.py`, which include `init_scorer,get_self_critical_reward,get_scores,get_self_cider_scores`.
 
-In the `train.py`, the model is build by `LossWrapper`, which is a subclass for `nn.Module`, that is, a newtork.
+In the `train.py`, the model is build by `LossWrapper`, which is a subclass of `nn.Module`, that is, a newtork.
 ```
 lw_model = LossWrapper(model, opt)
 ```
@@ -126,6 +126,6 @@ if opt.structure_after != -1 and epoch >= opt.structure_after:
 else:
     struc_flag = False
 ```
-That is we need
+In conclusion, we need
 * `opt.self_critical_after != -1 and epoch >= opt.self_critical_after`
 * `opt.structure_after == -1 or epoch < opt.structure_after:`
