@@ -113,10 +113,10 @@ In the `LossWrapper`, `get_self_critical_reward` is only under two situations
 
 ### Get cider score
 ```
-python scripts/prepro_ngrams.py --input_json data/dataset_coco.json --dict_json data/cocotalk.json --output_pkl data/coco-train --split train
+python scripts/prepro_ngrams.py --input_json data/flickr8kcn_original.json --dict_json data/f8ktalk.json --output_pkl dataf8k-train --split train
 ```
 
-The `ciderD_scorer.py` in `cider/pyciderevalcap/ciderD/ciderD_scorer.py` is modified that 
+In `self-critical.pytorch/cider/pyciderevalcap/ciderD/ciderD_scorer.py` we modify that 
 ```
     def compute_doc_freq(self):
         '''
@@ -137,13 +137,14 @@ As `self.document_frequency` is default to to have no assignment.
 
 ### Training
 
-In `train.py` we replace:
+In `self-critical.pytorch/tools/train.py` we replace
 ```
 #dp_model = torch.nn.DataParallel(model)
 #dp_model.vocab = getattr(model, 'vocab', None)  # nasty
 #dp_lw_model = torch.nn.DataParallel(lw_model)
-
-#To
+```
+To
+```
 dp_model = model 
 dp_model.vocab = getattr(model, 'vocab', None)  # nasty
 dp_lw_model = lw_model
@@ -151,10 +152,12 @@ dp_lw_model = lw_model
 The orginal code raise error for `DataParallel`, so we only use one CPU.
 
 
-In `ciderD_scorer.py` we replace
+In `self-critical.pytorch/cider/pyciderevalcap/ciderD/ciderD_scorer.py` we replace
 ```
 # df = np.log(max(1.0, self.document_frequency(ngram)
-#To
+```
+To
+```
 df = np.log(max(1.0, self.document_frequency.get(ngram,0)))
 ```
 The original code is SB.
