@@ -87,6 +87,12 @@ If you see error:  **RuntimeError: CUDA error: no kernel image is available for 
 pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
+#### (4) Generate annotation
+This is to generate the coco-like annotation file for evaluation using coco-caption
+```
+python scripts/prepro_reference_json.py --input_json data/flickr8kcn_original.json --output_json data/f8k_captions4eval.json
+```
+
 ## Data training
 
 As we are asked to use both RL and attention.
