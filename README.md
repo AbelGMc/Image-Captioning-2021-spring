@@ -174,3 +174,4 @@ python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc --val_images_use 
 2. `prepro_labels.py` will map all words that occur <= 5 time to a special UNK token
 3. `a2i2_nsc.yml(unstable)`
 4. features: Resnet101, GoogleNet
+5. Evaluate score
