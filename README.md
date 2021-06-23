@@ -169,3 +169,8 @@ Now we Run:
 python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc --val_images_use 100 --language_eval 0 --cached_tokens f8k-train-idxs
 ```
 
+### TO DO
+1. Increase epoch
+2. `prepro_labels.py` will map all words that occur <= 5 time to a special UNK token
+3. `a2i2_nsc.yml(unstable)`
+4. features: Resnet101, GoogleNet
