@@ -348,7 +348,8 @@ class AttModel(CaptionModel):
             # quit loop if all sequences have finished
             if unfinished.sum() == 0:
                 break
-
+        
+    
         return seq, seqLogprobs
 
     def _diverse_sample(self, fc_feats, att_feats, att_masks=None, opt={}):

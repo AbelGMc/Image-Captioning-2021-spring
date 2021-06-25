@@ -74,11 +74,14 @@ def get_self_critical_reward(greedy_res, data_gts, gen_result, opt):
     scores = opt.cider_reward_weight * cider_scores + opt.bleu_reward_weight * bleu_scores
 
     scores = scores[:gen_result_size].reshape(batch_size, seq_per_img) - scores[-batch_size:][:, np.newaxis]
+    
+
+
     scores = scores.reshape(gen_result_size)
 
     rewards = np.repeat(scores[:, np.newaxis], gen_result.shape[1], 1)
 
-    return rewards
+    return rewards,_
 
 def get_scores(data_gts, gen_result, opt):
     batch_size = gen_result.size(0)# batch_size = sample_size * seq_per_img

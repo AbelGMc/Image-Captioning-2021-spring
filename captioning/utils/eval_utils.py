@@ -223,6 +223,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
 
     # Switch back to training mode
     model.train()
+    print('average loss on validation: %.3f'%(loss_sum/loss_evals))
     return loss_sum/loss_evals, predictions, lang_stats
 
 

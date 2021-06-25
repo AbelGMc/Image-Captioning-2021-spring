@@ -59,9 +59,10 @@ class LossWrapper(torch.nn.Module):
                         'sample_n': opt.train_sample_n},
                     mode='sample')
             gts = [gts[_] for _ in gt_indices.tolist()]
-            reward = get_self_critical_reward(greedy_res, gts, gen_result, self.opt)
+            reward,_ = get_self_critical_reward(greedy_res, gts, gen_result, self.opt)
             reward = torch.from_numpy(reward).to(sample_logprobs)
             loss = self.rl_crit(sample_logprobs, gen_result.data, reward, reduction=reduction)
             out['reward'] = reward[:,0].mean()
+            out['cider'] = _
         out['loss'] = loss
         return out

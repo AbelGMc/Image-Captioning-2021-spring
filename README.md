@@ -117,7 +117,7 @@ In the `LossWrapper`, `get_self_critical_reward` is only under two situations
     * RL is directly used.
 
 
-### Get cider score
+### Training preparing
 ```
 python scripts/prepro_ngrams.py --input_json data/flickr8kcn_original.json --dict_json data/f8ktalk.json --output_pkl dataf8k-train --split train
 ```
@@ -140,8 +140,6 @@ In `self-critical.pytorch/cider/pyciderevalcap/ciderD/ciderD_scorer.py` we modif
             # maxcounts[ngram] = max(maxcounts.get(ngram,0), count)
 ```
 As `self.document_frequency` is default to to have no assignment.
-
-### Training
 
 In `self-critical.pytorch/tools/train.py` we replace
 ```
@@ -168,12 +166,27 @@ df = np.log(max(1.0, self.document_frequency.get(ngram,0)))
 ```
 The original code is SB.
 
+In `/captioning/utiles/eval_utils.py` function `eval_split`,add following before return:
+```
+print('average loss on validation: %.3f'%(loss_sum/loss_evals))
+```
+
+
+
+### Training
+
 
 Now we Run: 
 
 ```
-python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc --val_images_use 100 --language_eval 0 --cached_tokens f8k-train-idxs
+python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc  --save_checkpoint_every 1000
 ```
+
+```
+python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc  --max_epochs 2 --self_critical_after 1  --save_checkpoint_every 500
+```
+
+
 
 ### TO DO
 1. Increase epoch
@@ -181,3 +194,72 @@ python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc --val_images_use 
 3. `a2i2_nsc.yml(unstable)`
 4. features: Resnet101, GoogleNet
 5. Evaluate score
+
+### Modification: Get cider score on test
+
+In `captioning/utils/rewards.py` change `get_self_critical_reward()`
+```
+# return rewards
+
+# to
+
+return rewards,_
+```
+
+In `loss_wrapper`
+```
+# reward = get_self_critical_reward(greedy_res, gts, gen_result, self.opt)
+# to
+reward,_ = get_self_critical_reward(greedy_res, gts, gen_result, self.opt)
+
+
+#------------
+# add in line 66
+out['cider'] = _
+```
+
+
+In `train.py`:
+```
+##-----------------------------------------
+if sc_flag and (iteration % opt.save_checkpoint_every == 0 and not opt.save_every_epoch) or \
+    (epoch_done and opt.save_every_epoch):
+    print("===============================================")
+    print("Begin calculating cider score on TEST data set")
+    dp_lw_model.eval()
+    import copy
+    opt_test = copy.deepcopy(opt)
+    opt_test.batch_size = 10
+    opt_test.split = 'test'
+    loader_test = DataLoader(opt_test)
+    for _ in range(int(1000/opt_test.batch_size)):
+        data_test = loader_test.get_batch(opt_test.split)
+        print('Read data:', time.time() - start)
+
+        torch.cuda.synchronize()
+        start = time.time()
+
+        tmp = [data_test['fc_feats'], data_test['att_feats'], data_test['labels'], data_test['masks'], data_test['att_masks']]
+        tmp = [_ if _ is None else _.cuda() for _ in tmp]
+        fc_feats, att_feats, labels, masks, att_masks = tmp
+        
+        optimizer.zero_grad()
+        model_out = dp_lw_model(fc_feats, att_feats, labels, masks, att_masks, data['gts'], torch.arange(0, len(data['gts'])), sc_flag, struc_flag, drop_worst_flag)
+        cider_sum += model_out['cider']
+    dp_lw_model.train()
+    print('Average cider score on test set: %.3f'%(cider_sum/int(1000/opt_test.batch_size)))
+    print("End calculating cider score on TEST data set")
+    print("===============================================")
+##--------------------------------------------------
+```
+
+
+## New train 
+
+```
+python scripts/prepro_reference_json.py --input_json data/flickr8kcn_all.json --output_json data/f8k_captions4eval_all.json
+```
+
+```
+python scripts/prepro_ngrams.py --input_json data/flickr8kcn_all.json --dict_json data/f8ktalk_all.json --output_pkl dataf8k-train --split train
+```

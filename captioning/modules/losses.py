@@ -16,7 +16,7 @@ class RewardCriterion(nn.Module):
         mask = (seq>0).to(input)
         mask = torch.cat([mask.new(mask.size(0), 1).fill_(1), mask[:, :-1]], 1).reshape(-1)
         output = - input * reward * mask
-        
+
         if reduction == 'none':
             output = output.view(N,L).sum(1) / mask.view(N,L).sum(1)
         elif reduction == 'mean':

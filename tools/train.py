@@ -174,6 +174,40 @@ def train(opt):
                 utils.set_lr(optimizer, opt.current_lr)
             # Load data from train split (0)
             data = loader.get_batch('train')
+            cider_sum = 0
+
+            ##-----------------------------------------
+            if sc_flag and (iteration % opt.save_checkpoint_every == 0 and not opt.save_every_epoch) or \
+                (epoch_done and opt.save_every_epoch):
+                print("===============================================")
+                print("Begin calculating cider score on TEST data set")
+                dp_lw_model.eval()
+                import copy
+                opt_test = copy.deepcopy(opt)
+                opt_test.batch_size = 10
+                opt_test.split = 'test'
+                loader_test = DataLoader(opt_test)
+                for _ in range(int(1000/opt_test.batch_size)):
+                    data_test = loader_test.get_batch(opt_test.split)
+                    print('Read data:', time.time() - start)
+
+                    torch.cuda.synchronize()
+                    start = time.time()
+
+                    tmp = [data_test['fc_feats'], data_test['att_feats'], data_test['labels'], data_test['masks'], data_test['att_masks']]
+                    tmp = [_ if _ is None else _.cuda() for _ in tmp]
+                    fc_feats, att_feats, labels, masks, att_masks = tmp
+                    
+                    optimizer.zero_grad()
+                    model_out = dp_lw_model(fc_feats, att_feats, labels, masks, att_masks, data['gts'], torch.arange(0, len(data['gts'])), sc_flag, struc_flag, drop_worst_flag)
+                    cider_sum += model_out['cider']
+                dp_lw_model.train()
+                print('Average cider score on test set: %.3f'%(cider_sum/int(1000/opt_test.batch_size)))
+                print("End calculating cider score on TEST data set")
+                print("===============================================")
+            ##--------------------------------------------------
+
+
             print('Read data:', time.time() - start)
 
             torch.cuda.synchronize()
@@ -250,6 +284,8 @@ def train(opt):
                 eval_kwargs.update(vars(opt))
                 val_loss, predictions, lang_stats = eval_utils.eval_split(
                     dp_model, lw_model.crit, loader, eval_kwargs)
+
+                
 
                 if opt.reduce_on_plateau:
                     if 'CIDEr' in lang_stats:

@@ -6,6 +6,10 @@ import os
 import json
 import argparse
 from six.moves import cPickle
+
+import sys
+sys.path.append((os.getcwd()))
+
 import captioning.utils.misc as utils
 from collections import defaultdict
 
