@@ -117,9 +117,9 @@ In the `LossWrapper`, `get_self_critical_reward` is only under two situations
     * RL is directly used.
 
 
-### Get cider score
+### Get cache for cider score
 ```
-python scripts/prepro_ngrams.py --input_json data/flickr8kcn_original.json --dict_json data/f8ktalk.json --output_pkl dataf8k-train --split train
+python scripts/prepro_ngrams.py --input_json data/flickr8kcn_original.json --dict_json data/f8ktalk.json --output_pkl data/f8k-train --split train
 ```
 
 In `self-critical.pytorch/cider/pyciderevalcap/ciderD/ciderD_scorer.py` we modify that 
