@@ -117,9 +117,14 @@ In the `LossWrapper`, `get_self_critical_reward` is only under two situations
     * RL is directly used.
 
 
+
+<<<<<<< HEAD
 ### Training preparing
+=======
+### Get cache for cider score
+>>>>>>> 6761586f5f038b25d07a998d5bcd5d77edd069f6
 ```
-python scripts/prepro_ngrams.py --input_json data/flickr8kcn_original.json --dict_json data/f8ktalk.json --output_pkl dataf8k-train --split train
+python scripts/prepro_ngrams.py --input_json data/flickr8kcn_original.json --dict_json data/f8ktalk.json --output_pkl data/f8k-train --split train
 ```
 
 In `self-critical.pytorch/cider/pyciderevalcap/ciderD/ciderD_scorer.py` we modify that 
@@ -194,6 +199,7 @@ python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc  --max_epochs 2 -
 3. `a2i2_nsc.yml(unstable)`
 4. features: Resnet101, GoogleNet
 5. Evaluate score
+
 
 ### Modification: Get cider score on test
 
