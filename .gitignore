@@ -5,3 +5,10 @@ data/f8ktalk_fc/
 data/imagenet_weights/
 flickr8kcn/
 .vscode/
+
+test_log.txt
+data/f8ktalk_all_att
+data/f8ktalk_all_fc
+data/f8ktalk_att
+data/f8ktalk_fc
+log_Att2in_sc/
