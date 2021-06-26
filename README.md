@@ -93,6 +93,11 @@ This is to generate the coco-like annotation file for evaluation using coco-capt
 python scripts/prepro_reference_json.py --input_json data/flickr8kcn_original.json --output_json data/f8k_captions4eval.json
 ```
 
+### copy features
+```
+cp -r data/f8ktalk.json data/f8ktalk_label.h5 data/f8ktalk_att/ data/f8ktalk_fc/ XXXXXXXXPATHXXXXXXX
+```
+
 ## Data training
 
 As we are asked to use both RL and attention.
@@ -190,11 +195,11 @@ python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc  --max_epochs 2 -
 
 
 ### TO DO
-1. Increase epoch
-2. `prepro_labels.py` will map all words that occur <= 5 time to a special UNK token
+1. Increase epoch （epoch = 100)
+2. `prepro_labels.py` will map all words that occur <= 5 time to a special UNK token （modify <= 2)
 3. `a2i2_nsc.yml(unstable)`
 4. features: Resnet101, GoogleNet
-5. Evaluate score
+5. Evaluate score （finished）
 
 
 ### Modification: Get cider score on test
