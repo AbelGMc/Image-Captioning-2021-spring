@@ -202,7 +202,9 @@ def train(opt):
                     model_out = dp_lw_model(fc_feats, att_feats, labels, masks, att_masks, data['gts'], torch.arange(0, len(data['gts'])), sc_flag, struc_flag, drop_worst_flag)
                     cider_sum += model_out['cider']
                 dp_lw_model.train()
-                print('Average cider score on test set: %.3f'%(cider_sum/int(1000/opt_test.batch_size)))
+                test_cider_score = cider_sum/int(1000/opt_test.batch_size)
+                tb_summary_writer.add_scalar('test_cier_score,', test_cider_score, iteration)
+                print('Average cider score on test set: %.3f'%(test_cider_score))
                 print("End calculating cider score on TEST data set")
                 print("===============================================")
             ##--------------------------------------------------
@@ -284,8 +286,6 @@ def train(opt):
                 eval_kwargs.update(vars(opt))
                 val_loss, predictions, lang_stats = eval_utils.eval_split(
                     dp_model, lw_model.crit, loader, eval_kwargs)
-
-                
 
                 if opt.reduce_on_plateau:
                     if 'CIDEr' in lang_stats:
