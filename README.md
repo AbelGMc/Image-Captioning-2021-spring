@@ -199,11 +199,11 @@ python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc  --max_epochs 2 -
 
 
 ### TO DO
-1. Increase epoch （epoch = 100)
-2. `prepro_labels.py` will map all words that occur <= 5 time to a special UNK token （modify <= 2)
+1. Increase epoch （epoch = 100) (**inished**)
+2. `prepro_labels.py` will map all words that occur <= 5 time to a special UNK token （modify <= 2) (**inished**)
 3. `a2i2_nsc.yml(unstable)`
 4. features: Resnet101, GoogleNet
-5. Evaluate score （finished）
+5. Evaluate score （**inished**）
 
 
 ### Modification: Get cider score on test
