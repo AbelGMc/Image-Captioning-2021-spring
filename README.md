@@ -224,34 +224,47 @@ out['cider'] = _
 In `train.py`:
 ```
 ##-----------------------------------------
-if sc_flag and (iteration % opt.save_checkpoint_every == 0 and not opt.save_every_epoch) or \
+if (iteration % opt.save_checkpoint_every == 0 and not opt.save_every_epoch) or \
     (epoch_done and opt.save_every_epoch):
     print("===============================================")
     print("Begin calculating cider score on TEST data set")
-    dp_lw_model.eval()
+    
     import copy
     opt_test = copy.deepcopy(opt)
-    opt_test.batch_size = 10
+    opt_test.batch_size = 50
     opt_test.split = 'test'
     loader_test = DataLoader(opt_test)
+    cider_sum = 0
     for _ in range(int(1000/opt_test.batch_size)):
         data_test = loader_test.get_batch(opt_test.split)
         print('Read data:', time.time() - start)
-
         torch.cuda.synchronize()
         start = time.time()
-
         tmp = [data_test['fc_feats'], data_test['att_feats'], data_test['labels'], data_test['masks'], data_test['att_masks']]
         tmp = [_ if _ is None else _.cuda() for _ in tmp]
         fc_feats, att_feats, labels, masks, att_masks = tmp
-        
         optimizer.zero_grad()
-        model_out = dp_lw_model(fc_feats, att_feats, labels, masks, att_masks, data['gts'], torch.arange(0, len(data['gts'])), sc_flag, struc_flag, drop_worst_flag)
-        cider_sum += model_out['cider']
-    dp_lw_model.train()
-    print('Average cider score on test set: %.3f'%(cider_sum/int(1000/opt_test.batch_size)))
+        model.eval()
+        with torch.no_grad():
+            greedy_res, _ = model(fc_feats, att_feats, att_masks,
+                mode='sample',
+                opt={'sample_method': opt_test.sc_sample_method,
+                    'beam_size': opt_test.sc_beam_size})
+            model.train()
+            gen_result, sample_logprobs = model(fc_feats, att_feats, att_masks,
+                    opt={'sample_method':opt_test.train_sample_method,
+                        'beam_size':opt_test.train_beam_size,
+                        'sample_n': opt_test.train_sample_n},
+                    mode='sample')
+        gts = [data_test['gts'][_] for _ in torch.arange(0, len(data_test['gts'])).tolist()]
+        reward, cider = get_self_critical_reward(greedy_res, gts, gen_result, opt_test)                    
+        cider_sum += cider
+    test_cider_score = cider_sum/int(1000/opt_test.batch_size)
+    tb_summary_writer.add_scalar('test_cider_score', test_cider_score, iteration)
+    print('Average cider score on test set: %.3f'%(test_cider_score))
     print("End calculating cider score on TEST data set")
     print("===============================================")
+# model_out = dp_lw_model(fc_feats, att_feats, labels, masks, att_masks, data_test['gts'], torch.arange(0, len(data_test['gts'])), sc_flag, struc_flag, drop_worst_flag)
 ##--------------------------------------------------
 ```
 
