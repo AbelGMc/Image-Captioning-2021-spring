@@ -197,16 +197,6 @@ python tools/train.py --cfg configs/a2i2_sc.yml --id Att2in_sc  --max_epochs 2 -
 ```
 
 
-
-### TO DO
-1. Increase epoch （epoch = 100) (**finished**)
-2. `prepro_labels.py` will map all words that occur <= 5 time to a special UNK token （modify <= 2) (**finished**)
-3. `a2i2_nsc.yml(unstable)`
-4. Features: Resnet101, GoogleNet (**delete**)
-5. Evaluate score （**finished**）
-6. Google translate
-
-
 ### Modification: Get cider score on test
 
 In `captioning/utils/rewards.py` change `get_self_critical_reward()`
@@ -275,3 +265,12 @@ python scripts/prepro_reference_json.py --input_json data/flickr8kcn_all.json --
 ```
 python scripts/prepro_ngrams.py --input_json data/flickr8kcn_all.json --dict_json data/f8ktalk_all.json --output_pkl dataf8k-train --split train
 ```
+
+
+### TO DO
+1. Increase epoch （epoch = 100) (**finished**)
+2. `prepro_labels.py` will map all words that occur <= 5 time to a special UNK token （modify <= 2) (**finished**)
+3. `a2i2_nsc.yml(unstable)`
+4. Features: Resnet101, GoogleNet (**delete**)
+5. Evaluate score （**finished**）
+6. Google translate
