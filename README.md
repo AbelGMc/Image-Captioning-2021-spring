@@ -125,7 +125,10 @@ In the `LossWrapper`, `get_self_critical_reward` is only under two situations
 
 
 ### Training preparing
+
+
 ```
+Not Need!
 python scripts/prepro_ngrams.py --input_json data/flickr8kcn_original.json --dict_json data/f8ktalk.json --output_pkl data/f8k-train --split train
 ```
 
