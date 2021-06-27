@@ -305,7 +305,7 @@ def train(opt):
                     else:
                         optimizer.scheduler_step(val_loss)
                 # Write validation result into summary
-                tb_summary_writer.add_scalar('validation loss', val_loss, iteration)
+                tb_summary_writer.add_scalar('validation_loss', val_loss, iteration)
                 if lang_stats is not None:
                     for k,v in lang_stats.items():
                         tb_summary_writer.add_scalar(k, v, iteration)
