@@ -77,6 +77,7 @@ The image information and vocabulary are dumped into `data/f8ktalk.json` and dis
 The job is done in notebook 2,where features are stored in `./data/feature/[id].npy` using functions from `bigfile.py`.
 
 #### (3b) Train Resnet101 features
+Download pretrained resnet models. The models can be downloaded from [here](https://drive.google.com/open?id=0B7fNdx_jAqhtbVYzOURMdDNHSGM), and should be placed in `data/imagenet_weights`.
 ```
 python scripts/prepro_feats.py --input_json data/flickr8kcn_original.json --output_dir data/f8ktalk --images_root $IMAGE_ROOT
 ```
