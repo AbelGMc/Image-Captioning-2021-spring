@@ -81,6 +81,13 @@ If you see error:  **RuntimeError: CUDA error: no kernel image is available for 
 pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
+#### (4) Get the cache
+
+```
+python scripts/prepro_ngrams.py --input_json data/flickr8kcn_original.json --dict_json data/f8ktalk.json --output_pkl data/f8k-train --split train
+```
+
+
 ### copy features
 ```
 cp -r data/f8ktalk.json data/f8ktalk_label.h5 data/f8ktalk_att/ data/f8ktalk_fc/ XXXXXXXXPATHXXXXXXX
