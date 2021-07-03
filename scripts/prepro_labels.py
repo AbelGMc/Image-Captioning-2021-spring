@@ -197,7 +197,7 @@ if __name__ == "__main__":
 
     # options
     parser.add_argument('--max_length', default=16, type=int, help='max length of a caption, in number of words. captions longer than this get clipped.')
-    parser.add_argument('--word_count_threshold', default=5, type=int, help='only words that occur more than this number of times will be put in vocab')
+    parser.add_argument('--word_count_threshold', default=0, type=int, help='only words that occur more than this number of times will be put in vocab')
 
     args = parser.parse_args()
     params = vars(args) # convert to ordinary dict
