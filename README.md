@@ -68,15 +68,8 @@ python scripts/prepro_labels.py --input_json data/flickr8kcn_original.json --out
 ```
 The image information and vocabulary are dumped into `data/f8ktalk.json` and discretized caption data are dumped into `data/f8ktalk_label.h5`.
 
-#### (3a) Download and process preextracted features
 
-(The `scripts/prepro_feats.py` can extract features from resnet101 or etc. But now we just use downloaded features from Flick8kcn github repository.)
-
-(The example feature file is in [google drive](https://drive.google.com/drive/folders/1eCdz62FAVCGogOuNhy87Nmlo5_I0sH2J): `cocotalk_att.tar` and `cocotalk_fc.tar`. They should be downloaded to `data/cocotalk_fc` folder. Each file is just a one dimensional numpy array with the name of `cocoid`.)
-
-The job is done in notebook 2,where features are stored in `./data/feature/[id].npy` using functions from `bigfile.py`.
-
-#### (3b) Train Resnet101 features
+#### (3) Train Resnet101 features
 Download pretrained resnet models. The models can be downloaded from [here](https://drive.google.com/open?id=0B7fNdx_jAqhtbVYzOURMdDNHSGM), and should be placed in `data/imagenet_weights`.
 ```
 python scripts/prepro_feats.py --input_json data/flickr8kcn_original.json --output_dir data/f8ktalk --images_root $IMAGE_ROOT
@@ -86,12 +79,6 @@ If you see error:  **RuntimeError: CUDA error: no kernel image is available for 
 
 ```
 pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
-```
-
-#### (4) Generate annotation
-This is to generate the coco-like annotation file for evaluation using coco-caption
-```
-python scripts/prepro_reference_json.py --input_json data/flickr8kcn_original.json --output_json data/f8k_captions4eval.json
 ```
 
 ### copy features
@@ -126,11 +113,6 @@ In the `LossWrapper`, `get_self_critical_reward` is only under two situations
 
 ### Training preparing
 
-
-```
-Not Need!
-python scripts/prepro_ngrams.py --input_json data/flickr8kcn_original.json --dict_json data/f8ktalk.json --output_pkl data/f8k-train --split train
-```
 
 In `self-critical.pytorch/cider/pyciderevalcap/ciderD/ciderD_scorer.py` we modify that 
 ```
@@ -269,16 +251,6 @@ if (iteration % opt.save_checkpoint_every == 0 and not opt.save_every_epoch) or 
 ```
 
 
-## New train 
-
-```
-python scripts/prepro_reference_json.py --input_json data/flickr8kcn_all.json --output_json data/f8k_captions4eval_all.json
-```
-
-```
-python scripts/prepro_ngrams.py --input_json data/flickr8kcn_all.json --dict_json data/f8ktalk_all.json --output_pkl dataf8k-train --split train
-```
-
 
 ### TO DO
 1. Increase epoch （epoch = 100) (**finished**)
@@ -287,3 +259,8 @@ python scripts/prepro_ngrams.py --input_json data/flickr8kcn_all.json --dict_jso
 4. Features: Resnet101, GoogleNet (**delete**)
 5. Evaluate score （**finished**）
 6. Google translate
+
+### Withour attention
+```
+python tools/train.py --cfg configs/fc_rl.yml --id fc_sc  --save_checkpoint_every 1000
+```
