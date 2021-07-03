@@ -120,24 +120,6 @@ In the `LossWrapper`, `get_self_critical_reward` is only under two situations
 
 ### Training preparing
 
-
-In `self-critical.pytorch/cider/pyciderevalcap/ciderD/ciderD_scorer.py` we modify that 
-```
-    def compute_doc_freq(self):
-        '''
-        Compute term frequency for reference data.
-        This will be used to compute idf (inverse document frequency later)
-        The term frequency is stored in the object
-        :return: None
-        '''
-        for refs in self.crefs:
-            if not hasattr(self, 'document_frequency'):
-                self.document_frequency = dict()
-            # refs, k ref captions of one image
-            for ngram in set([ngram for ref in refs for (ngram,count) in ref.items()]):
-                self.document_frequency[ngram] = self.document_frequency.get(ngram,0)+1
-            # maxcounts[ngram] = max(maxcounts.get(ngram,0), count)
-```
 As `self.document_frequency` is default to to have no assignment.
 
 In `self-critical.pytorch/tools/train.py` we replace
