@@ -145,7 +145,6 @@ To
 ```
 df = np.log(max(1.0, self.document_frequency.get(ngram,0)))
 ```
-The original code is SB.
 
 In `/captioning/utiles/eval_utils.py` function `eval_split`,add following before return:
 ```
