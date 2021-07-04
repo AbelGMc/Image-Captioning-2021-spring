@@ -248,7 +248,7 @@ if (iteration % opt.save_checkpoint_every == 0 and not opt.save_every_epoch) or 
 5. Evaluate score （**finished**）
 6. Google translate
 
-### Withour attention
+### Without attention
 ```
 python tools/train.py --cfg configs/fc_rl.yml --id fc_sc  --save_checkpoint_every 1000
 ```
